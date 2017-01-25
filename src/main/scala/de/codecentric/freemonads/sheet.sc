@@ -1,6 +1,6 @@
-import cats.{Id, ~>}
 import de.codecentric.domain.{Cart, CartId, Item, ItemId}
 import de.codecentric.freemonads._
+import de.codecentric.simplealgebra.SimpleAlgebra
 
 import scala.collection.immutable.Seq
 
@@ -14,12 +14,6 @@ val items = Seq(item1,item2,item3).groupBy(_.id)
 
 val cart = Cart(CartId("123"), Seq(item1, item2))
 
-val p = Programs.addItem(ItemId("3"), CartId("123"))
+Programs.addItem(ItemId("3"), CartId("123"))
 
-p.foldMap(new (DbAlgebra ~> Id) {
-  override def apply[A](fa: DbAlgebra[A]): Id[A] = fa match {
-    case LoadItem(iid) => ???
-    case LoadCart(cid) => ???
-    case SaveCart(cart) => ???
-  }
-})
+SimpleAlgebra.program.foldMap(SimpleAlgebra.interpreter)
