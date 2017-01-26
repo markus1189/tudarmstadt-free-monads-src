@@ -12,7 +12,7 @@ val item2 = Item(ItemId("2"), "Apple", 99)
 
 val item3 = Item(ItemId("3"), "Laptop", 99999)
 
-val items = Seq(item1,item2,item3).groupBy(_.id).mapValues(_.head)
+val items = Seq(item1, item2, item3).groupBy(_.id).mapValues(_.head)
 
 val cart = Cart(CartId("123"), Seq(item1, item2))
 
@@ -20,7 +20,7 @@ val p = Programs.addItem(ItemId("3"), CartId("123"))
 
 SimpleAlgebra.program.foldMap(SimpleAlgebra.interpreter)
 
-def interpPure(itemDb: mutable.Map[ItemId,Item], cartDb: mutable.Map[CartId,Cart]) =
+def interpPure(itemDb: mutable.Map[ItemId, Item], cartDb: mutable.Map[CartId, Cart]) =
   new (DbAlgebra ~> Id) {
     override def apply[A](fa: DbAlgebra[A]): Id[A] = fa match {
       case LoadItem(iid) => itemDb.get(iid)
@@ -31,8 +31,10 @@ def interpPure(itemDb: mutable.Map[ItemId,Item], cartDb: mutable.Map[CartId,Cart
     }
   }
 
-val itemsDb = mutable.Map(items.toList:_*)
+val itemsDb = mutable.Map(items.toList: _*)
 val cartsDb = mutable.Map(cart.id -> cart)
+println(itemsDb)
+println(cartsDb)
 p.foldMap(interpPure(itemsDb, cartsDb))
 itemsDb
 cartsDb
